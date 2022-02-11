@@ -1,16 +1,68 @@
 require "csv"
-require "pry"
 Dir[File.expand_path("../src", __FILE__) << "/*.rb"].each do |file|
   require file
 end
 
-puts "読み込みたいファイル名を拡張子抜きで入力してください。 例)log.csvというファイルを入力したい場合は「log」と入力してください。"
-file_name = gets.chomp
+HEADER = "監視ログファイルを読み込み、"
+QUESTIONS = [
+  "故障状態のサーバアドレスとそのサーバの故障期間を出力します。",
+  "N回以上タイムアウトしたサーバアドレスとそのサーバの故障期間を出力します。",
+  "過負荷になっているサーバアドレスを出力します。",
+  "故障しているサブネットを出力します。"
+]
+
+puts "読み込みたいファイル名を拡張子抜きで入力してEnterを押してください。 例)log.csvというファイルを入力したい場合は「log」と入力してください。"
+# file_name = gets.chomp
+file_name = "log"
 
 unless File.exist? "#{file_name}.csv"
   puts "#{file_name}.csvは存在しません。ファイル名を確認してください。"
   return
 end
+
+puts "ファイルを確認しました。次に確認したい内容の番号を入力してEnterを押してください"
+QUESTIONS.each.with_index(1) do |question, index|
+  puts "#{index}.#{HEADER}#{question}"
+end
+
+question_no = gets.chomp.to_i
+if question_no < 1 || QUESTIONS.size < question_no
+  puts "1から#{NUMBER_OF_QUESTIONS}の中から入力してください。最初からやり直してください。"
+  return
+end
+
+case question_no
+when 1 then
+when 2 then
+  puts "何回以上連続して故障したらタイムアウトと見なしましょうか。1以上の整数を入力してEnterを押してください。"
+  times = gets.chomp.to_i
+  if times < 1
+    puts "1以上の数値を入力してください。最初からやり直してください。"
+    return
+  end
+when 3 then
+  puts "直近何回の平均時間を算出しましょうか。1以上の整数を入力してEnterを押してください。"
+  times = gets.chomp.to_i
+  if times < 1
+    puts "1以上の数値を入力してください。最初からやり直してください。"
+    return
+  end
+
+  puts "何ミリ秒以上から過負荷と見なしましょうか。0以上の整数を入力してEnterを押してください。"
+  average = gets.chomp.to_f
+  if average < 0
+    puts "0以上の数値を入力してください。最初からやり直してください。"
+    return
+  end
+when 4 then
+  puts "何回以上連続して故障したらタイムアウトと見なしましょうか。1以上の整数を入力してEnterを押してください。"
+  times = gets.chomp.to_i
+  if times < 1
+    puts "1以上の数値を入力してください。最初からやり直してください。"
+    return
+  end
+end
+
 
 logs = []
 CSV.foreach("#{file_name}.csv") do |row|
