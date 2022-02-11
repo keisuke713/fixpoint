@@ -2,7 +2,7 @@ require "pry"
 TIMEOUT_MESSAGE = "-"
 NOT_FIX_MESSAGE = "-----"
 
-def fetch_broken_addresses(logs, times)
+def fetch_not_working_servers(logs, times)
   broken_addresses = {}
   broken_times = {}
   result = []
