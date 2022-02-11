@@ -3,8 +3,8 @@ TIMEOUT_MESSAGE = "-"
 NOT_FIX_MESSAGE = "-----"
 
 def fetch_not_working_servers(logs, times)
-  broken_addresses = {}
-  broken_times = {}
+  not_working_addresses = {}
+  not_working_times = {}
   result = []
 
   logs.each do |log|
@@ -13,19 +13,19 @@ def fetch_not_working_servers(logs, times)
     response = log[2]
 
     if response == TIMEOUT_MESSAGE
-      next if broken_addresses.has_key?(address)
-      broken_times.store(address, broken_times.fetch(address, 0) + 1)
-      broken_addresses.store(address, time) if broken_times.fetch(address) >= times
+      next if not_working_addresses.has_key?(address)
+      not_working_times.store(address, not_working_times.fetch(address, 0) + 1)
+      not_working_addresses.store(address, time) if not_working_times.fetch(address) >= times
     else
-      if broken_addresses.has_key?(address)
-        result.push({"address" => address, "from" => broken_addresses[address], "to" => time})
-        broken_addresses.delete(address)
+      if not_working_addresses.has_key?(address)
+        result.push({"address" => address, "from" => not_working_addresses[address], "to" => time})
+        not_working_addresses.delete(address)
       end
-      broken_times.store(address, 0)
+      not_working_times.store(address, 0)
     end
   end
 
-  broken_addresses.each do |address, time|
+  not_working_addresses.each do |address, time|
     result.push({"address" => address, "from" => time, "to" => NOT_FIX_MESSAGE})
   end
 
