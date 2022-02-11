@@ -79,6 +79,12 @@ def main
 
     puts START
     logs = convert_csv_to_array(file_name)
+    fetch_overloaded_servers(logs, times, average).each do |result|
+      puts "------------------"
+      puts "サーバーアドレス: #{result["address"]}"
+      puts "開始時刻: #{result["from"]}"
+      puts "終了時刻: #{result["to"]}"
+    end
     puts FINISH
   when 4 then
     puts "何回以上連続して故障したらタイムアウトと見なしましょうか。1以上の整数を入力してEnterを押してください。"
