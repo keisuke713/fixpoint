@@ -8,8 +8,9 @@ unless File.exist? "#{file_name}.csv"
   puts "#{file_name}.csvは存在しません。ファイル名を確認してください。"
   return
 end
-# => ["Ruby", "1995"]
-#    ["Rust", "2010"]
 
-# ファイルから一度に
-# p CSV.read("#{file_name}.csv")
+logs = []
+CSV.foreach("#{file_name}.csv") do |row|
+  logs.push row
+end
+
