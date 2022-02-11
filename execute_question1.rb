@@ -1,5 +1,8 @@
 require "csv"
 require "pry"
+Dir[File.expand_path("../src", __FILE__) << "/*.rb"].each do |file|
+  require file
+end
 
 TIMEOUT_MESSAGE = "-"
 
@@ -29,59 +32,6 @@ logs = [
   ["20201019133324", "10.20.30.1/16", "-"],
   ["20201019133325", "10.20.30.2/16", "2"]
 ]
-# cache = {}
-# result = []
-# logs.each do |log|
-#   time = log[0]
-#   address = log[1]
-#   response = log[2]
-#
-#   # cacheにaddressが入っている(クラッシュ)していてクラッシュ
-#   # cacheにaddressが入っていないかつ正常
-#   next if cache.has_key?(address) && response == TIMEOUT_MESSAGE
-#   next if !(cache.has_key?(address) || response == TIMEOUT_MESSAGE)
-#
-#   # cacheにaddressが入っているかつ正常
-#   # cacheにaddressが入っていないかつクラッシュ
-#   if(cache.has_key?(address))
-#     result.push({"addrss" => address, "from" => cache[address], "to" => time})
-#     cache.delete address
-#   else
-#     cache[address] = time
-#   end
-# end
-#
-# cache.each do |address, time|
-#   result.push({"address" => address, "from" => time, "to" => "-----"})
-# end
 
-# puts result
-
-def test(logs)
-  cache = {}
-  result = []
-  logs.each do |log|
-    time = log[0]
-    address = log[1]
-    response = log[2]
-
-    next if cache.has_key?(address) && response == TIMEOUT_MESSAGE
-    next if !(cache.has_key?(address) || response == TIMEOUT_MESSAGE)
-
-    if cache.has_key?(address)
-      result.push({"addrss" => address, "from" => cache[address], "to" => time})
-      cache.delete(address)
-    else
-      cache[address] = time
-    end
-  end
-
-  cache.each do |address, time|
-    result.push({"address" => address, "from" => time, "to" => "-----"})
-  end
-
-  result
-end
-
-puts test(logs)
+puts question1(logs)
 
