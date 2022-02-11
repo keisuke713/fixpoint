@@ -27,7 +27,7 @@ end
 
 question_no = gets.chomp.to_i
 if question_no < 1 || QUESTIONS.size < question_no
-  puts "1から#{NUMBER_OF_QUESTIONS}の中から入力してください。最初からやり直してください。"
+  puts "1から#{QUESTIONS.size}の中から入力してください。最初からやり直してください。"
   return
 end
 
