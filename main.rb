@@ -13,79 +13,93 @@ QUESTIONS = [
 START = "=============== ログの読み込みを始めます。 ================="
 FINISH = "=============== ログの読み込みを終了します。 ================="
 
-puts "読み込みたいファイル名を拡張子抜きで入力してEnterを押してください。 例)log.csvというファイルを入力したい場合は「log」と入力してください。"
-# file_name = gets.chomp
-file_name = "log"
+def main
+  puts "読み込みたいファイル名を拡張子抜きで入力してEnterを押してください。 例)log.csvというファイルを入力したい場合は「log」と入力してください。"
+  file_name = gets.chomp
+  # file_name = "log"
 
-unless File.exist? "#{file_name}.csv"
-  puts "#{file_name}.csvは存在しません。ファイル名を確認してください。"
-  return
-end
-
-puts "ファイルを確認しました。次に確認したい内容の番号を入力してEnterを押してください"
-QUESTIONS.each.with_index(1) do |question, index|
-  puts "#{index}.#{HEADER}#{question}"
-end
-
-question_no = gets.chomp.to_i
-if question_no < 1 || QUESTIONS.size < question_no
-  puts "1から#{QUESTIONS.size}の中から入力してください。最初からやり直してください。"
-  return
-end
-
-case question_no
-when 1 then
-  puts START
-  logs = convert_csv_to_array(file_name)
-  puts FINISH
-when 2 then
-  puts "何回以上連続して故障したらタイムアウトと見なしましょうか。1以上の整数を入力してEnterを押してください。"
-  times = gets.chomp.to_i
-  if times < 1
-    puts "1以上の数値を入力してください。最初からやり直してください。"
+  unless File.exist? "#{file_name}.csv"
+    puts "#{file_name}.csvは存在しません。ファイル名を確認してください。"
     return
   end
 
-  puts START
-  logs = convert_csv_to_array(file_name)
-  puts FINISH
-when 3 then
-  puts "直近何回の平均時間を算出しましょうか。1以上の整数を入力してEnterを押してください。"
-  times = gets.chomp.to_i
-  if times < 1
-    puts "1以上の数値を入力してください。最初からやり直してください。"
+  puts "ファイルを確認しました。次に確認したい内容の番号を入力してEnterを押してください"
+  QUESTIONS.each.with_index(1) do |question, index|
+    puts "#{index}.#{HEADER}#{question}"
+  end
+
+  question_no = gets.chomp.to_i
+  if question_no < 1 || QUESTIONS.size < question_no
+    puts "1から#{QUESTIONS.size}の中から入力してください。最初からやり直してください。"
     return
   end
 
-  puts "何ミリ秒以上から過負荷と見なしましょうか。0以上の整数を入力してEnterを押してください。"
-  average = gets.chomp.to_f
-  if average < 0
-    puts "0以上の数値を入力してください。最初からやり直してください。"
-    return
-  end
+  case question_no
+  when 1 then
+    puts START
+    logs = convert_csv_to_array(file_name)
+    fetch_not_working_servers(logs, 1).each do |result|
+      puts "------------------"
+      puts "サーバーアドレス: #{result["address"]}"
+      puts "タイムアウト時刻: #{result["from"]}"
+      puts "復旧時刻: #{result["to"]}"
+    end
+    puts FINISH
+  when 2 then
+    puts "何回以上連続して故障したらタイムアウトと見なしましょうか。1以上の整数を入力してEnterを押してください。"
+    times = gets.chomp.to_i
+    if times < 1
+      puts "1以上の数値を入力してください。最初からやり直してください。"
+      return
+    end
 
-  puts START
-  logs = convert_csv_to_array(file_name)
-  puts FINISH
-when 4 then
-  puts "何回以上連続して故障したらタイムアウトと見なしましょうか。1以上の整数を入力してEnterを押してください。"
-  times = gets.chomp.to_i
-  if times < 1
-    puts "1以上の数値を入力してください。最初からやり直してください。"
-    return
-  end
+    puts START
+    logs = convert_csv_to_array(file_name)
+    fetch_not_working_servers(logs, times).each do |result|
+      puts "------------------"
+      puts "サーバーアドレス: #{result["address"]}"
+      puts "タイムアウト時刻: #{result["from"]}"
+      puts "復旧時刻: #{result["to"]}"
+    end
+    puts FINISH
+  when 3 then
+    puts "直近何回の平均時間を算出しましょうか。1以上の整数を入力してEnterを押してください。"
+    times = gets.chomp.to_i
+    if times < 1
+      puts "1以上の数値を入力してください。最初からやり直してください。"
+      return
+    end
 
-  puts START
-  logs = convert_csv_to_array(file_name)
-  puts FINISH
+    puts "何ミリ秒以上から過負荷と見なしましょうか。0以上の整数を入力してEnterを押してください。"
+    average = gets.chomp.to_f
+    if average < 0
+      puts "0以上の数値を入力してください。最初からやり直してください。"
+      return
+    end
+
+    puts START
+    logs = convert_csv_to_array(file_name)
+    puts FINISH
+  when 4 then
+    puts "何回以上連続して故障したらタイムアウトと見なしましょうか。1以上の整数を入力してEnterを押してください。"
+    times = gets.chomp.to_i
+    if times < 1
+      puts "1以上の数値を入力してください。最初からやり直してください。"
+      return
+    end
+
+    puts START
+    logs = convert_csv_to_array(file_name)
+    puts FINISH
+  end
 end
 
-question1(logs).each do |result|
-  puts "------------------"
-  puts "サーバーアドレス: #{result["address"]}"
-  puts "タイムアウト時刻: #{result["from"]}"
-  puts "復旧時刻: #{result["to"]}"
-end
+# question1(logs).each do |result|
+#   puts "------------------"
+#   puts "サーバーアドレス: #{result["address"]}"
+#   puts "タイムアウト時刻: #{result["from"]}"
+#   puts "復旧時刻: #{result["to"]}"
+# end
 
 def convert_csv_to_array(file_name)
   array = []
@@ -107,3 +121,5 @@ def convert_csv_to_array(file_name)
   # ]
   return array
 end
+
+main
