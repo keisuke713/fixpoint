@@ -2,7 +2,7 @@ require "../src/fetch_broken_addresses"
 
 RSpec.describe "故障しているサーバとその期間を解析する" do
   context "1回でもタイムアウトしたら故障とみなす" do
-    TIMES = 1
+    DEFAUTL_TIMES = 1
     it "一つのサーバが最初からタイムアウトする" do
       input = [
         ["20201019133124", "10.20.30.1/16", "-"],
@@ -15,7 +15,7 @@ RSpec.describe "故障しているサーバとその期間を解析する" do
       output = [
         {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133224"}
       ]
-      expect(fetch_broken_addresses(input, TIMES)).to eq output
+      expect(fetch_broken_addresses(input, DEFAUTL_TIMES)).to eq output
     end
     it "一つのサーバが途中からタイムアウトする" do
       input = [
@@ -29,7 +29,7 @@ RSpec.describe "故障しているサーバとその期間を解析する" do
       output = [
         {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133224"}
       ]
-      expect(fetch_broken_addresses(input, TIMES)).to eq output
+      expect(fetch_broken_addresses(input, DEFAUTL_TIMES)).to eq output
     end
     it "一つのサーバがタイムアウトしたまま終了する" do
       input = [
@@ -40,9 +40,9 @@ RSpec.describe "故障しているサーバとその期間を解析する" do
         ["20201019133234", "192.168.1.1/24", "8"]
       ]
       output = [
-        {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "-----"}
+        {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => NOT_FIX_MESSAGE}
       ]
-      expect(fetch_broken_addresses(input, TIMES)).to eq output
+      expect(fetch_broken_addresses(input, DEFAUTL_TIMES)).to eq output
     end
     it "一つのサーバが長期間タイムアウトを挟み復旧する" do
       input = [
@@ -56,7 +56,7 @@ RSpec.describe "故障しているサーバとその期間を解析する" do
       output = [
         {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133229"}
       ]
-      expect(fetch_broken_addresses(input, TIMES)).to eq output
+      expect(fetch_broken_addresses(input, DEFAUTL_TIMES)).to eq output
     end
     it "一つのサーバが複数回タイムアウト->復旧を繰り返す" do
       input = [
@@ -78,7 +78,7 @@ RSpec.describe "故障しているサーバとその期間を解析する" do
         {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133229"},
         {"address" => "10.20.30.1/16", "from" => "20201019233134", "to" => "20201019233229"}
       ]
-      expect(fetch_broken_addresses(input, TIMES)).to eq output
+      expect(fetch_broken_addresses(input, DEFAUTL_TIMES)).to eq output
     end
     it "複数サーバがタイムアウトする" do
       input = [
@@ -101,10 +101,11 @@ RSpec.describe "故障しているサーバとその期間を解析する" do
         {"address" => "192.168.1.2/24", "from" => "20201019133135", "to" => "20201019233124"},
         {"address" => "10.20.30.1/16", "from" => "20201019233134", "to" => "20201019233229"}
       ]
-      expect(fetch_broken_addresses(input, TIMES)).to eq output
+      expect(fetch_broken_addresses(input, DEFAUTL_TIMES)).to eq output
     end
   end
   context "2回以上タイムアウトしたら故障とみなす" do
+    TIMES = 2
     it "2回連続でタイムアウトしない" do
       input = [
         ["20201019133124", "10.20.30.1/16", "-"],
@@ -141,7 +142,7 @@ RSpec.describe "故障しているサーバとその期間を解析する" do
         ["20201019133234", "192.168.1.1/24", "8"]
       ]
       output = [
-        {"address" => "10.20.30.1/16", "from" => "20201019133134", "to" => "-----"}
+        {"address" => "10.20.30.1/16", "from" => "20201019133134", "to" => NOT_FIX_MESSAGE}
       ]
       expect(fetch_broken_addresses(input, TIMES)).to eq output
     end
@@ -163,7 +164,7 @@ RSpec.describe "故障しているサーバとその期間を解析する" do
       ]
       output = [
         {"address" => "10.20.30.1/16", "from" => "20201019133134", "to" => "20201019133224"},
-        {"address" => "10.20.30.1/16", "from" => "20201019133334", "to" => "-----"},
+        {"address" => "10.20.30.1/16", "from" => "20201019133334", "to" => NOT_FIX_MESSAGE},
       ]
       expect(fetch_broken_addresses(input, TIMES)).to eq output
     end
@@ -188,8 +189,8 @@ RSpec.describe "故障しているサーバとその期間を解析する" do
       output = [
         {"address" => "10.20.30.1/16", "from" => "20201019133134", "to" => "20201019133224"},
         {"address" => "10.20.30.2/16", "from" => "20201019133326", "to" => "20201019133526"},
-        {"address" => "10.20.30.1/16", "from" => "20201019133334", "to" => "-----"},
-        {"address" => "192.168.1.2/24", "from" => "20201019133335", "to" => "-----"},
+        {"address" => "10.20.30.1/16", "from" => "20201019133334", "to" => NOT_FIX_MESSAGE},
+        {"address" => "192.168.1.2/24", "from" => "20201019133335", "to" => NOT_FIX_MESSAGE},
       ]
       expect(fetch_broken_addresses(input, TIMES)).to eq output
     end
