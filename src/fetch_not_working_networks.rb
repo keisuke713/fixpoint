@@ -6,6 +6,7 @@ NOT_FIX_MESSAGE = "-----"
 def fetch_not_working_networks(logs, times)
   not_working_addresses = {}
   not_working_times = {}
+  addresses_by_grouping_network = fetch_addresses_by_grouping_network(logs)
   result = []
 
   logs.each do |log|
@@ -20,14 +21,9 @@ end
 def fetch_addresses_by_grouping_network(logs)
   addresses_by_grouping_network = {}
   logs.each do |log|
-    address = log[1]
-    tmp = address.split(/\.|\//)
-    
-    next if tmp.size != 5
-    
-    subnet = tmp[-1].to_i / 8
-    network = tmp[0...subnet].join(".")
-    host = tmp[subnet...-1].join(".")
+    splited_address = split_address(log[1])
+    network = splited_address.fetch("network")
+    host = splited_address.fetch("host")
     
     if addresses_by_grouping_network.has_key?(network)
       addresses_by_grouping_network.fetch(network).add(host)
@@ -36,6 +32,14 @@ def fetch_addresses_by_grouping_network(logs)
     end
   end
   addresses_by_grouping_network
+end
+
+def split_address(address)
+  tmp = address.split(/\.|\//)
+  subnet = tmp[-1].to_i / 8
+  network = tmp[0...subnet].join(".")
+  host = tmp[subnet...-1].join(".")
+  {"network" => network, "host" => host}
 end
 
 input = [
@@ -50,4 +54,4 @@ input = [
   ["20201019133234", "192.168.1.1/24", "-"]
 ]
 
-puts test(input)
+puts fetch_addresses_by_grouping_network(input)
