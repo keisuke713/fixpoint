@@ -71,7 +71,7 @@ def main
     end
 
     puts "何ミリ秒以上から過負荷と見なしましょうか。0以上の整数を入力してEnterを押してください。"
-    average = gets.chomp.to_f
+    average = gets.chomp.to_i
     if average < 0
       puts "0以上の数値を入力してください。最初からやり直してください。"
       return
