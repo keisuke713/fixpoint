@@ -1,25 +1,25 @@
 TIMEOUT_MESSAGE = "-"
 
 def question1(logs)
-  cache = {}
+  log_cache = {}
   result = []
   logs.each do |log|
     time = log[0]
     address = log[1]
     response = log[2]
 
-    next if cache.has_key?(address) && response == TIMEOUT_MESSAGE
-    next if !(cache.has_key?(address) || response == TIMEOUT_MESSAGE)
+    next if log_cache.has_key?(address) && response == TIMEOUT_MESSAGE
+    next if !(log_cache.has_key?(address) || response == TIMEOUT_MESSAGE)
 
-    if cache.has_key?(address)
-      result.push({"address" => address, "from" => cache[address], "to" => time})
-      cache.delete(address)
+    if log_cache.has_key?(address)
+      result.push({"address" => address, "from" => log_cache[address], "to" => time})
+      log_cache.delete(address)
     else
-      cache[address] = time
+      log_cache[address] = time
     end
   end
 
-  cache.each do |address, time|
+  log_cache.each do |address, time|
     result.push({"address" => address, "from" => time, "to" => "-----"})
   end
 
