@@ -1,3 +1,5 @@
+TIMEOUT_MESSAGE = "-"
+
 def question1(logs)
   cache = {}
   result = []
@@ -10,7 +12,7 @@ def question1(logs)
     next if !(cache.has_key?(address) || response == TIMEOUT_MESSAGE)
 
     if cache.has_key?(address)
-      result.push({"addrss" => address, "from" => cache[address], "to" => time})
+      result.push({"address" => address, "from" => cache[address], "to" => time})
       cache.delete(address)
     else
       cache[address] = time

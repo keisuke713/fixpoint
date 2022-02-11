@@ -4,8 +4,6 @@ Dir[File.expand_path("../src", __FILE__) << "/*.rb"].each do |file|
   require file
 end
 
-TIMEOUT_MESSAGE = "-"
-
 puts "読み込みたいファイル名を拡張子抜きで入力してください。 例)log.csvというファイルを入力したい場合は「log」と入力してください。"
 # file_name = gets.chomp
 file_name = "log"
