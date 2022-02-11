@@ -24,12 +24,9 @@ def fetch_addresses_by_grouping_network(logs)
     splited_address = split_address(log[1])
     network = splited_address.fetch("network")
     host = splited_address.fetch("host")
-    
-    if addresses_by_grouping_network.has_key?(network)
-      addresses_by_grouping_network.fetch(network).add(host)
-    else
-      addresses_by_grouping_network.store(network, Set.new([host]))
-    end
+
+    addresses_by_grouping_network.store(network, Set.new) unless addresses_by_grouping_network.has_key?(network)
+    addresses_by_grouping_network.fetch(network).add(host)
   end
   addresses_by_grouping_network
 end
