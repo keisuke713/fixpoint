@@ -1,4 +1,4 @@
-require "../src/question1"
+require "../src/fetch_broken_addresses"
 
 RSpec.describe do
   it "一つのアドレスが最初からタイムアウトする" do
@@ -13,7 +13,7 @@ RSpec.describe do
     output = [
       {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133224"}
     ]
-    expect(question1(input)).to eq output
+    expect(fetch_broken_addresses(input)).to eq output
   end
   it "一つのアドレスが途中からタイムアウトする" do
     input = [
@@ -27,7 +27,7 @@ RSpec.describe do
     output = [
       {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133224"}
     ]
-    expect(question1(input)).to eq output
+    expect(fetch_broken_addresses(input)).to eq output
   end
   it "一つのアドレスがタイムアウトしたまま終了する" do
     input = [
@@ -40,7 +40,7 @@ RSpec.describe do
     output = [
       {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "-----"}
     ]
-    expect(question1(input)).to eq output
+    expect(fetch_broken_addresses(input)).to eq output
   end
   it "一つのアドレスが長期間タイムアウトを挟み復旧する" do
     input = [
@@ -54,7 +54,7 @@ RSpec.describe do
     output = [
       {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133229"}
     ]
-    expect(question1(input)).to eq output
+    expect(fetch_broken_addresses(input)).to eq output
   end
   it "一つのアドレスが複数回タイムアウト->復旧を繰り返す" do
     input = [
@@ -76,7 +76,7 @@ RSpec.describe do
       {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133229"},
       {"address" => "10.20.30.1/16", "from" => "20201019233134", "to" => "20201019233229"}
     ]
-    expect(question1(input)).to eq output
+    expect(fetch_broken_addresses(input)).to eq output
   end
   it "複数アドレスがタイムアウトする" do
     input = [
@@ -99,6 +99,6 @@ RSpec.describe do
       {"address" => "192.168.1.2/24", "from" => "20201019133135", "to" => "20201019233124"},
       {"address" => "10.20.30.1/16", "from" => "20201019233134", "to" => "20201019233229"}
     ]
-    expect(question1(input)).to eq output
+    expect(fetch_broken_addresses(input)).to eq output
   end
 end

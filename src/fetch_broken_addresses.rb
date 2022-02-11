@@ -1,6 +1,6 @@
 TIMEOUT_MESSAGE = "-"
 
-def question1(logs)
+def fetch_broken_addresses(logs, times)
   log_cache = {}
   result = []
   logs.each do |log|
