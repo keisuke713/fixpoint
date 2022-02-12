@@ -287,8 +287,8 @@ RSpec.describe "" do
         ["20201019133234", "192.168.1.1/24", "-"]
       ]
       output = []
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_networks(1)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(1).build
+      expect(log_reader.not_working_networks).to eq output
     end
     it "一定期間同じネットワーク内の全てのサーバが故障する" do
       input = [
@@ -302,8 +302,8 @@ RSpec.describe "" do
       output = [
         {"network" => "192.168.1", "from" => "20201019133135", "to" => "20201019133224"}
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_networks(1)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(1).build
+      expect(log_reader.not_working_networks).to eq output
     end
     it "途中から最後まで同じネットワーク内の全てのサーバが故障する" do
       input = [
@@ -318,8 +318,8 @@ RSpec.describe "" do
       output = [
         {"network" => "192.168.1", "from" => "20201019133224", "to" => "-----"}
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_networks(1)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(1).build
+      expect(log_reader.not_working_networks).to eq output
     end
     it "同じネットワーク内の全てのサーバが複数回同時に故障する" do
       input = [
@@ -337,8 +337,8 @@ RSpec.describe "" do
         {"network" => "192.168.1", "from" => "20201019133135", "to" => "20201019133224"},
         {"network" => "192.168.1", "from" => "20201019133237", "to" => "-----"}
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_networks(1)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(1).build
+      expect(log_reader.not_working_networks).to eq output
     end
     it "同じネットワーク内の全てのサーバが一定期間の間に全てN回タイムアウトする" do
       input = [
@@ -355,8 +355,8 @@ RSpec.describe "" do
       output = [
         {"from"=>"20201019133235", "network"=>"192.168.1", "to"=>"-----"}
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_networks(2)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(2).build
+      expect(log_reader.not_working_networks).to eq output
     end
     it "同じネットワーク内の全てのサーバが同期間に故障をしていない" do
       input = [
@@ -371,8 +371,8 @@ RSpec.describe "" do
         ["20201019133234", "192.168.1.1/24", "-"]
       ]
       output = []
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_networks(1)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(1).build
+      expect(log_reader.not_working_networks).to eq output
     end
     it "ネットワーク192.168.1内の全てのサーバがある期間で全て故障する" do
       input = [
@@ -391,8 +391,8 @@ RSpec.describe "" do
       output = [
         {"network" => "192.168.1", "from" => "20201019133244", "to" => "-----"}
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_networks(2)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(2).build
+      expect(log_reader.not_working_networks).to eq output
     end
     it "ネットワーク192.168.1と10.20内の全てのサーバがある期間で全て故障する" do
       input = [
@@ -413,8 +413,8 @@ RSpec.describe "" do
         {"network" => "10.20", "from" => "20201019133245", "to" => "20201019133246"},
         {"network" => "192.168.1", "from" => "20201019133244", "to" => "-----"}
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_networks(2)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(1).build
+      expect(log_reader.not_working_networks).to eq output
     end
 
   end
