@@ -46,7 +46,7 @@ def main
     end
     puts FINISH
   when 2 then
-    puts "何回以上連続して故障したらタイムアウトと見なしましょうか。1以上の整数を入力してEnterを押してください。"
+    puts "何回以上連続してタイムアウトしたら故障と見なしましょうか。1以上の整数を入力してEnterを押してください。"
     times = gets.chomp.to_i
     if times < 1
       puts "1以上の数値を入力してください。最初からやり直してください。"
@@ -87,7 +87,7 @@ def main
     end
     puts FINISH
   when 4 then
-    puts "何回以上連続して故障したらタイムアウトと見なしましょうか。1以上の整数を入力してEnterを押してください。"
+    puts "何回以上連続してタイムアウトしたら故障と見なしましょうか。1以上の整数を入力してEnterを押してください。"
     times = gets.chomp.to_i
     if times < 1
       puts "1以上の数値を入力してください。最初からやり直してください。"
@@ -96,6 +96,12 @@ def main
 
     puts START
     logs = convert_csv_to_array(file_name)
+    fetch_not_working_networks(logs, times).each do |result|
+      puts "------------------"
+      puts "ネットワーク: #{result["network"]}"
+      puts "タイムアウト時刻: #{result["from"]}"
+      puts "終了時刻: #{result["to"]}"
+    end
     puts FINISH
   end
 end
