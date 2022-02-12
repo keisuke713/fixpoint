@@ -3,16 +3,59 @@ require "set"
 TIMEOUT_MESSAGE = "-"
 NOT_FIX_MESSAGE = "-----"
 
-def fetch_not_working_networks(logs, times)
+def fetch_not_working_networks(logs, limits)
+  # ダウンしたネットワークを管理
+  # {network => from, network => from}
+  not_working_networks = {}
+  # ダウンしているアドレスを管理
+  # {network => [host, host], network => [host, host]}
   not_working_addresses = {}
-  not_working_times = {}
+  # アドレスごとのタイムアウトした回数を管理
+  # {address => N, address => N}
+  not_working_limits = {}
   addresses_by_grouping_network = fetch_addresses_by_grouping_network(logs)
   result = []
 
   logs.each do |log|
     time = log[0]
     address = log[1]
+    splited_address = split_address(address)
+    network = splited_address.fetch("network")
+    host = splited_address.fetch("host")
     response = log[2]
+    
+    # タイムアウトした場合
+    # not_working_limitsにアドレスを追加
+    # 上限に達していたらnot_working_addressに追加
+    # not_working_addressesの数がaddress_by_grouping_networkと同じだったらnot_working_networksにネットワークと時間を保持
+    
+    # タイムアウトしなかった場合
+    # 該当のネットワークがnot_working_networksに含まれていた場合resultにネットワークとfrom,toを追加し、取り除く
+    # 該当のアドレスがnot_working_addressesに含まれていた場合は取り除く。
+    # not_working_limitsを0に戻す
+    if response == TIMEOUT_MESSAGE
+      not_working_limits.store(address, not_working_limits.fetch(address, 0) + 1)
+      if not_working_limits.fetch(address) >= limits
+        not_working_addresses.store(network, Set.new) unless not_working_addresses.has_key?(network)
+        not_working_addresses.fetch(network).add(host) unless not_working_addresses.fetch(network).include?(host)
+        if not_working_addresses.fetch(network).size == addresses_by_grouping_network.fetch(network).size && !not_working_networks.has_key?(network)
+          not_working_networks.store(network, time)
+        end
+      end
+    else
+      if not_working_networks.has_key?(network)
+        result.push({"network" => network, "from" => not_working_networks.fetch(network), "to" => time})
+        not_working_networks.delete(network)
+      end
+      if not_working_addresses.fetch(network, Set.new).include?(host)
+        not_working_addresses.fetch(network).delete(host)
+      end
+      not_working_limits.store(address, 0)
+    end
+  end
+
+  not_working_networks.each do |network, time|
+    result.push("network" => network, "from" => time, "to" => NOT_FIX_MESSAGE)
   end
 
   result
@@ -38,17 +81,3 @@ def split_address(address)
   host = tmp[subnet...-1].join(".")
   {"network" => network, "host" => host}
 end
-
-input = [
-  ["20201019133124", "192.168.1.1/24", "30"],
-  ["20201019133125", "192.168.1.2/24", "-"],
-  ["20201019133126", "10.20.30.2/16", "-"],
-  ["20201019133134", "192.168.1.3/24", "-"],
-  ["20201019133135", "192.168.1.1/24", "5"],
-  ["20201019133136", "10.20.30.1/16", "1"],
-  ["20201019133224", "192.168.1.2/24", "522"],
-  ["20201019133225", "10.20.30.2/16", "1"],
-  ["20201019133234", "192.168.1.1/24", "-"]
-]
-
-puts fetch_addresses_by_grouping_network(input)
