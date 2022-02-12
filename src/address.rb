@@ -1,4 +1,4 @@
-class Address
+class Server
   attr_accessor :network, :host, :subnet
 
   def initialize(address)

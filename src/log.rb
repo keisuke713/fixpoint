@@ -1,6 +1,7 @@
 class Log
   TIMEOUT_MESSAGE = "-"
-  attr_reader :time, :network, :host, :subnet, :response
+  attr_reader :time, :response
+  attr_accessor :network, :host, :subnet
 
   def initialize(time, address, response)
     @time = time
@@ -22,9 +23,9 @@ class Log
 
   def set_network_and_host_and_subnet(address)
     tmp = address.split(/\.|\//)
-    @subnet = tmp[-1].to_i
+    self.subnet = tmp[-1].to_i
     partition = subnet / 8
-    @network = tmp[0...partition].join(".")
-    @host = tmp[partition...-1].join(".")
+    self.network = tmp[0...partition].join(".")
+    self.host = tmp[partition...-1].join(".")
   end
 end
