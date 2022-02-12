@@ -7,7 +7,7 @@ class LogReaderFactory
   def build
     LogReader.new(
       @logs.map {|log|
-        Log.new(log[0], log[1], log[2])
+        Log.new(log[0], Address.new(log[1]), log[2])
       }
     )
   end

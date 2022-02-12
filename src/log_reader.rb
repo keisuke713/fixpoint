@@ -111,9 +111,8 @@ class LogReader
     result = []
 
     logs.each do |log|
-      splited_address = split_address(log.address)
-      network = splited_address.fetch("network")
-      host = splited_address.fetch("host")
+      network = log.network
+      host = log.host
 
       # タイムアウトした場合
       # not_working_limitsにアドレスを追加
@@ -155,9 +154,8 @@ class LogReader
   def fetch_addresses_by_grouping_network
     addresses_by_grouping_network = {}
     logs.each do |log|
-      splited_address = split_address(log.address)
-      network = splited_address.fetch("network")
-      host = splited_address.fetch("host")
+      network = log.network
+      host = log.host
 
       addresses_by_grouping_network.store(network, Set.new) unless addresses_by_grouping_network.has_key?(network)
       addresses_by_grouping_network.fetch(network).add(host)
