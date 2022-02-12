@@ -4,12 +4,13 @@ class LogReader
   FINISH = "=============== ログの読み込みを終了します。 ================="
   HEADER = "--------------"
 
-  attr_reader :logs, :networks
   def initialize(logs, networks)
     @logs = logs
     @networks = networks
   end
 
+  # not_working_serversの結果を出力する
+  # 分けたのは自動テストを行いやすくするため
   def display_not_working_servers
     puts START
     not_working_servers.each do |server|
@@ -58,6 +59,7 @@ class LogReader
       end
     end
 
+    # 最後まで復旧しなかったServerも存在することが考えられるため
     servers.select{|address, server|
       server.is_not_working?
     }.each {|address, server|
@@ -101,6 +103,7 @@ class LogReader
       end
     end
 
+    # 最後まで復旧しなかったネットワークが考えられるため
     networks.select { |network|
       network.is_not_working?
     }.each { |network|
@@ -111,22 +114,20 @@ class LogReader
 
   private
 
+  # これらのメンバ変数はパブリックメソッドにすると外部からも呼び出せてしまうためプライベートメソッドにする。
+  # @logsなど@をいちいちタイピングするのはめんどくさいため、logs・networksメソッドでラップする。
+  def logs
+    @logs
+  end
+
+  def networks
+    @networks
+  end
+
   def network(curr_network)
     networks.find {|network|
       network.network == curr_network
     }
-  end
-
-  def fetch_addresses_by_grouping_network
-    addresses_by_grouping_network = {}
-    logs.each do |log|
-      network = log.network
-      host = log.host
-
-      addresses_by_grouping_network.store(network, Set.new) unless addresses_by_grouping_network.has_key?(network)
-      addresses_by_grouping_network.fetch(network).add(host)
-    end
-    addresses_by_grouping_network
   end
 
   def servers
