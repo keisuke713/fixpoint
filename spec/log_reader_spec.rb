@@ -214,8 +214,8 @@ RSpec.describe "" do
         ["20201019133254", "10.20.30.1/16", "10"],
       ]
       output = []
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.overloaded_servers(3,2)).to eq output
+      log_reader = LogReaderFactory.new(input).set_time(3).set_average(2).build
+      expect(log_reader.overloaded_servers).to eq output
     end
     it "平均値が基準を満たさない場合" do
       input = [
@@ -225,8 +225,8 @@ RSpec.describe "" do
         ["20201019133135", "10.20.30.1/16", "3"],
       ]
       output = []
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.overloaded_servers(2,5)).to eq output
+      log_reader = LogReaderFactory.new(input).set_time(2).set_average(5).build
+      expect(log_reader.overloaded_servers).to eq output
     end
     it "一度平均値が基準値を超える" do
       input = [
@@ -238,8 +238,8 @@ RSpec.describe "" do
       output = [
         {"address" => "10.20.30.1/16", "from" => "20201019133125", "to" => "20201019133134"}
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.overloaded_servers(2,5)).to eq output
+      log_reader = LogReaderFactory.new(input).set_time(2).set_average(5).build
+      expect(log_reader.overloaded_servers).to eq output
     end
     it "複数回平均値が基準値を超える" do
       input = [
@@ -252,8 +252,8 @@ RSpec.describe "" do
         {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133125"},
         {"address" => "10.20.30.1/16", "from" => "20201019133134", "to" => "20201019133135"}
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.overloaded_servers(2,5)).to eq output
+      log_reader = LogReaderFactory.new(input).set_time(2).set_average(5).build
+      expect(log_reader.overloaded_servers).to eq output
     end
     it "複数サーバの平均値が基準値を超える" do
       input = [
@@ -272,8 +272,8 @@ RSpec.describe "" do
         {"address" => "10.20.30.2/16", "from" => "20201019133136", "to" => "20201019133139"},
         {"address" => "10.20.30.1/16", "from" => "20201019133135", "to" => "20201019133140"}
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.overloaded_servers(3,5)).to eq output
+      log_reader = LogReaderFactory.new(input).set_time(3).set_average(5).build
+      expect(log_reader.overloaded_servers).to eq output
     end
   end
   context "同一ネットワーク内の全てのサーバが故障したらネットワーク自体の故障と見なす" do
