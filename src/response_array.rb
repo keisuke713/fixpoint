@@ -1,7 +1,7 @@
 class ResponseArray
   def initialize(capacity)
-    @response = []
-    @time = []
+    @responses = []
+    @times = []
     @capacity = capacity
     @sum = 0
   end
@@ -9,39 +9,57 @@ class ResponseArray
   def push(response, time)
     # 指定されていた容量を超えていたら先頭から削除しないといけないため
     if capacity_is_over?
-      res = @response.shift
+      res = responses.shift
       @sum -= res
-      @time.shift
+      times.shift
     end
-    @response.push(response)
-    @time.push(time)
+    responses.push(response)
+    times.push(time)
     @sum += response
   end
 
   def average
-    return -1 if @response.empty? || !is_full?
-    @sum / @response.size
+    return -1 if responses.empty? || !is_full?
+    sum / responses.size
   end
 
   def is_full?
-    full(@response)
+    full(responses)
   end
 
   def start
-    @time[0]
+    times[0]
   end
 
   def empty?
-    @response.empty?
+    responses.empty?
   end
 
   private
 
   def capacity_is_over?
-    @response.size >= @capacity
+    responses.size >= capacity
   end
 
   def full(array)
-    array.size >= @capacity
+    array.size >= capacity
+  end
+
+  private
+
+  def responses
+    @responses
+  end
+
+  def times
+    @times
+  end
+
+  def capacity
+    @capacity
+  end
+
+  def sum
+    @sum
   end
 end
