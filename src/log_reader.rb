@@ -1,10 +1,48 @@
 class LogReader
   TIMEOUT_MESSAGE = "-"
   NOT_FIX_MESSAGE = "-----"
+  START = "=============== ログの読み込みを始めます。 ================="
+  FINISH = "=============== ログの読み込みを終了します。 ================="
+  HEADER = "--------------"
+
   attr_reader :logs
   # accepts List<Log> logs
   def initialize(logs)
     @logs = logs
+  end
+
+  def display_not_working_servers(limits)
+    puts START
+    not_working_servers(limits).each do |server|
+      puts HEADER
+      puts "サーバーアドレス: #{server["address"]}"
+      puts "タイムアウト時刻: #{server["from"]}"
+      puts "復旧時刻: #{server["to"]}"
+    end
+    puts FINISH
+  end
+
+  def display_overloaded_servers(times, average)
+    puts START
+    overloaded_servers(times, average).each do |server|
+      puts "------------------"
+      puts "サーバーアドレス: #{server["address"]}"
+      puts "開始時刻: #{server["from"]}"
+      puts "終了時刻: #{server["to"]}"
+
+    end
+    puts FINISH
+  end
+
+  def display_not_working_networks(times)
+    puts START
+    not_working_networks(times).each do |server|
+      puts "------------------"
+      puts "サーバーアドレス: #{server["network"]}"
+      puts "タイムアウト時刻: #{server["from"]}"
+      puts "終了時刻: #{server["to"]}"
+    end
+    puts FINISH
   end
   
   def not_working_servers(limits)

@@ -10,13 +10,11 @@ QUESTIONS = [
   "過負荷になっているサーバアドレスを出力します。",
   "故障しているサブネットを出力します。"
 ].map(&:freeze)
-START = "=============== ログの読み込みを始めます。 ================="
-FINISH = "=============== ログの読み込みを終了します。 ================="
 
 def main
   puts "読み込みたいファイル名を拡張子抜きで入力してEnterを押してください。 例)log.csvというファイルを入力したい場合は「log」と入力してください。"
-  file_name = gets.chomp
-  # file_name = "log"
+  # file_name = gets.chomp
+  file_name = "log"
 
   unless File.exist? "#{file_name}.csv"
     puts "#{file_name}.csvは存在しません。ファイル名を確認してください。"
@@ -28,6 +26,8 @@ def main
     puts "#{index}.#{HEADER}#{question}"
   end
 
+  log_reader_factory = LogReaderFactory.new(convert_csv_to_array(file_name))
+
   question_no = gets.chomp.to_i
   if question_no < 1 || QUESTIONS.size < question_no
     puts "1から#{QUESTIONS.size}の中から入力してください。最初からやり直してください。"
@@ -36,15 +36,8 @@ def main
 
   case question_no
   when 1 then
-    puts START
-    logs = convert_csv_to_array(file_name)
-    fetch_not_working_servers(logs, 1).each do |result|
-      puts "------------------"
-      puts "サーバーアドレス: #{result["address"]}"
-      puts "タイムアウト時刻: #{result["from"]}"
-      puts "復旧時刻: #{result["to"]}"
-    end
-    puts FINISH
+    log_reader = log_reader_factory.build
+    log_reader.display_not_working_servers(1)
   when 2 then
     puts "何回以上連続してタイムアウトしたら故障と見なしましょうか。1以上の整数を入力してEnterを押してください。"
     times = gets.chomp.to_i
@@ -53,15 +46,8 @@ def main
       return
     end
 
-    puts START
-    logs = convert_csv_to_array(file_name)
-    fetch_not_working_servers(logs, times).each do |result|
-      puts "------------------"
-      puts "サーバーアドレス: #{result["address"]}"
-      puts "タイムアウト時刻: #{result["from"]}"
-      puts "復旧時刻: #{result["to"]}"
-    end
-    puts FINISH
+    log_reader = log_reader_factory.build
+    log_reader.display_not_working_servers(1)
   when 3 then
     puts "直近何回の平均時間を算出しましょうか。1以上の整数を入力してEnterを押してください。"
     times = gets.chomp.to_i
@@ -77,15 +63,8 @@ def main
       return
     end
 
-    puts START
-    logs = convert_csv_to_array(file_name)
-    fetch_overloaded_servers(logs, times, average).each do |result|
-      puts "------------------"
-      puts "サーバーアドレス: #{result["address"]}"
-      puts "開始時刻: #{result["from"]}"
-      puts "終了時刻: #{result["to"]}"
-    end
-    puts FINISH
+    log_reader = log_reader_factory.build
+    log_reader.display_overloaded_servers(times, average)
   when 4 then
     puts "何回以上連続してタイムアウトしたら故障と見なしましょうか。1以上の整数を入力してEnterを押してください。"
     times = gets.chomp.to_i
@@ -94,43 +73,16 @@ def main
       return
     end
 
-    puts START
-    logs = convert_csv_to_array(file_name)
-    fetch_not_working_networks(logs, times).each do |result|
-      puts "------------------"
-      puts "ネットワーク: #{result["network"]}"
-      puts "タイムアウト時刻: #{result["from"]}"
-      puts "終了時刻: #{result["to"]}"
-    end
-    puts FINISH
+    log_reader = log_reader_factory.build
+    log_reader.display_not_working_networks(times)
   end
 end
-
-# question1(logs).each do |result|
-#   puts "------------------"
-#   puts "サーバーアドレス: #{result["address"]}"
-#   puts "タイムアウト時刻: #{result["from"]}"
-#   puts "復旧時刻: #{result["to"]}"
-# end
 
 def convert_csv_to_array(file_name)
   array = []
   CSV.foreach("#{file_name}.csv") do |row|
     array.push row
   end
-  # mock
-  # [
-  #   ["20201019133124", "10.20.30.1/16", "-"],
-  #   ["20201019133125", "10.20.30.2/16", "1"],
-  #   ["20201019133134", "192.168.1.1/24", "10"],
-  #   ["20201019133135", "192.168.1.2/24", "5"],
-  #   ["20201019133224", "10.20.30.1/16", "522"],
-  #   ["20201019133225", "10.20.30.2/16", "-"],
-  #   ["20201019133234", "192.168.1.1/24", "8"],
-  #   ["20201019133235", "192.168.1.2/24", "15"],
-  #   ["20201019133324", "10.20.30.1/16", "-"],
-  #   ["20201019133325", "10.20.30.2/16", "2"]
-  # ]
   return array
 end
 
