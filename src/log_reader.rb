@@ -150,6 +150,8 @@ class LogReader
     result
   end
 
+  private
+
   def fetch_addresses_by_grouping_network
     addresses_by_grouping_network = {}
     logs.each do |log|
@@ -160,13 +162,5 @@ class LogReader
       addresses_by_grouping_network.fetch(network).add(host)
     end
     addresses_by_grouping_network
-  end
-
-  def split_address(address)
-    tmp = address.split(/\.|\//)
-    subnet = tmp[-1].to_i / 8
-    network = tmp[0...subnet].join(".")
-    host = tmp[subnet...-1].join(".")
-    {"network" => network, "host" => host}
   end
 end

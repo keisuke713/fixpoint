@@ -5,6 +5,8 @@ class Server
     set_network_and_host(address)
   end
 
+  private
+
   def set_network_and_host(address)
     tmp = address.split(/\.|\//)
     self.subnet = tmp[-1].to_i
