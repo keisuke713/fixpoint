@@ -1,11 +1,12 @@
-require "pry"
 class Server
   attr_reader :amount_of_broken, :limit
   attr_accessor :network, :host, :subnet, :time_when_not_working
 
-  def initialize(address, limit)
+  def initialize(address, limit, time, average)
     set_network_and_host(address)
     @limit = limit
+    @time = time
+    @average = average
     @amount_of_broken = 0
     @time_when_not_working = nil
   end

@@ -1,3 +1,4 @@
+require "../src/response_array"
 require "../src/server"
 require "../src/log"
 require "../src/log_reader"

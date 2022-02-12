@@ -51,8 +51,8 @@ def main
     log_reader.display_not_working_servers(1)
   when 3 then
     puts "直近何回の平均時間を算出しましょうか。1以上の整数を入力してEnterを押してください。"
-    times = gets.chomp.to_i
-    if times < 1
+    time = gets.chomp.to_i
+    if time < 1
       puts "1以上の数値を入力してください。最初からやり直してください。"
       return
     end
@@ -64,18 +64,18 @@ def main
       return
     end
 
-    log_reader = log_reader_factory.build
-    log_reader.display_overloaded_servers(times, average)
+    log_reader = log_reader_factory.set_time(time).set_average(average).build
+    log_reader.display_overloaded_servers(time, average)
   when 4 then
     puts "何回以上連続してタイムアウトしたら故障と見なしましょうか。1以上の整数を入力してEnterを押してください。"
-    times = gets.chomp.to_i
+    time = gets.chomp.to_i
     if times < 1
       puts "1以上の数値を入力してください。最初からやり直してください。"
       return
     end
 
     log_reader = log_reader_factory.build
-    log_reader.display_not_working_networks(times)
+    log_reader.display_not_working_networks(time)
   end
 end
 
