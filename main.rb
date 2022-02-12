@@ -40,13 +40,14 @@ def main
     log_reader.display_not_working_servers(1)
   when 2 then
     puts "何回以上連続してタイムアウトしたら故障と見なしましょうか。1以上の整数を入力してEnterを押してください。"
-    times = gets.chomp.to_i
-    if times < 1
+    limit = gets.chomp.to_i
+    if limit < 1
       puts "1以上の数値を入力してください。最初からやり直してください。"
       return
     end
 
-    log_reader = log_reader_factory.build
+
+    log_reader = log_reader_factory.set_limit(limit).build
     log_reader.display_not_working_servers(1)
   when 3 then
     puts "直近何回の平均時間を算出しましょうか。1以上の整数を入力してEnterを押してください。"

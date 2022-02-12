@@ -5,7 +5,6 @@ require "../src/log_reader_factory"
 
 RSpec.describe "" do
   context "N回以上タイムアウトしたら故障とみなす" do
-    DEFAUTL_TIMES = 1
     it "一つのサーバが最初からタイムアウトする" do
       input = [
         ["20201019133124", "10.20.30.1/16", "-"],
@@ -19,7 +18,7 @@ RSpec.describe "" do
         {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133224"}
       ]
       log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_servers(DEFAUTL_TIMES)).to eq output
+      expect(log_reader.not_working_servers).to eq output
     end
     it "一つのサーバが途中からタイムアウトする" do
       input = [
@@ -34,7 +33,7 @@ RSpec.describe "" do
         {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133224"}
       ]
       log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_servers(DEFAUTL_TIMES)).to eq output
+      expect(log_reader.not_working_servers).to eq output
     end
     it "一つのサーバがタイムアウトしたまま終了する" do
       input = [
@@ -48,7 +47,7 @@ RSpec.describe "" do
         {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => LogReader::NOT_FIX_MESSAGE}
       ]
       log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_servers(DEFAUTL_TIMES)).to eq output
+      expect(log_reader.not_working_servers).to eq output
     end
     it "一つのサーバが長期間タイムアウトを挟み復旧する" do
       input = [
@@ -63,7 +62,7 @@ RSpec.describe "" do
         {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133229"}
       ]
       log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_servers(DEFAUTL_TIMES)).to eq output
+      expect(log_reader.not_working_servers).to eq output
     end
     it "一つのサーバが複数回タイムアウト->復旧を繰り返す" do
       input = [
@@ -85,7 +84,7 @@ RSpec.describe "" do
         {"address" => "10.20.30.1/16", "from" => "20201019233134", "to" => "20201019233229"}
       ]
       log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_servers(DEFAUTL_TIMES)).to eq output
+      expect(log_reader.not_working_servers).to eq output
     end
     it "複数サーバがタイムアウトする" do
       input = [
@@ -108,7 +107,7 @@ RSpec.describe "" do
         {"address" => "10.20.30.1/16", "from" => "20201019233134", "to" => "20201019233229"}
       ]
       log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_servers(DEFAUTL_TIMES)).to eq output
+      expect(log_reader.not_working_servers).to eq output
     end
     it "2回連続でタイムアウトしない" do
       input = [
@@ -120,8 +119,8 @@ RSpec.describe "" do
         ["20201019133234", "192.168.1.1/24", "8"]
       ]
       output = []
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_servers(2)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(2).build
+      expect(log_reader.not_working_servers).to eq output
     end
     it "故障した後すぐに復旧する" do
       input = [
@@ -135,8 +134,8 @@ RSpec.describe "" do
       output = [
         {"address" => "10.20.30.1/16", "from" => "20201019133134", "to" => "20201019133224"}
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_servers(2)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(2).build
+      expect(log_reader.not_working_servers).to eq output
     end
     it "故障して最後まで復旧しない" do
       input = [
@@ -150,8 +149,8 @@ RSpec.describe "" do
       output = [
         {"address" => "10.20.30.1/16", "from" => "20201019133134", "to" => LogReader::NOT_FIX_MESSAGE}
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_servers(2)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(2).build
+      expect(log_reader.not_working_servers).to eq output
     end
     it "一つのサーバが複数回故障" do
       input = [
@@ -173,8 +172,8 @@ RSpec.describe "" do
         {"address" => "10.20.30.1/16", "from" => "20201019133134", "to" => "20201019133224"},
         {"address" => "10.20.30.1/16", "from" => "20201019133334", "to" => LogReader::NOT_FIX_MESSAGE},
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_servers(2)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(2).build
+      expect(log_reader.not_working_servers).to eq output
     end
     it "複数サーバが故障" do
       input = [
@@ -200,8 +199,8 @@ RSpec.describe "" do
         {"address" => "10.20.30.1/16", "from" => "20201019133334", "to" => LogReader::NOT_FIX_MESSAGE},
         {"address" => "192.168.1.2/24", "from" => "20201019133335", "to" => LogReader::NOT_FIX_MESSAGE},
       ]
-      log_reader = LogReaderFactory.new(input).build
-      expect(log_reader.not_working_servers(2)).to eq output
+      log_reader = LogReaderFactory.new(input).set_limit(2).build
+      expect(log_reader.not_working_servers).to eq output
     end
   end
   context "直近m回の平均がtを超えたら過負荷と見なす" do

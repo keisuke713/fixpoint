@@ -1,21 +1,33 @@
+require "pry"
 class Server
-  attr_accessor :network, :host, :subnet
+  attr_reader :amount_of_broken, :limit
+  attr_accessor :network, :host, :subnet, :time_when_not_working
 
-  def initialize(address)
+  def initialize(address, limit)
     set_network_and_host(address)
-    @work = true
+    @limit = limit
+    @amount_of_broken = 0
+    @time_when_not_working = nil
   end
 
   def is_working?
-    @work
+    @amount_of_broken < limit
   end
 
-  def break
-    @work = false
+  def is_not_working?
+    !is_working?
+  end
+
+  def break(time)
+    @amount_of_broken += 1
+    if is_not_working? && time_when_not_working.nil?
+      self.time_when_not_working = time
+    end
   end
 
   def fix
-    @work = true
+    @amount_of_broken = 0
+    self.time_when_not_working = nil
   end
 
   def address
@@ -32,11 +44,5 @@ class Server
     partition = subnet / 8
     self.network = tmp[0...partition].join(".")
     self.host = tmp[partition...-1].join(".")
-  end
-
-  def to_string
-    [
-      [network, host].join("."), subnet
-    ].join("/")
   end
 end

@@ -4,7 +4,7 @@ class LogReader
   FINISH = "=============== ログの読み込みを終了します。 ================="
   HEADER = "--------------"
 
-  attr_reader :logs
+  attr_reader :logs, :servers
   def initialize(logs, servers)
     @logs = logs
     @servers = servers
@@ -42,29 +42,27 @@ class LogReader
     end
     puts FINISH
   end
-  
-  def not_working_servers(limits)
-    not_working_servers = {}
-    not_working_limits = {}
-    result = []
 
+  def not_working_servers
+    result = []
     logs.each do |log|
+      server = servers.fetch(log.address)
       if log.is_timeout?
-        next if not_working_servers.has_key?(log.address)
-        not_working_limits.store(log.address, not_working_limits.fetch(log.address, 0) + 1)
-        not_working_servers.store(log.address, log.time) if not_working_limits.fetch(log.address) >= limits
+        next if server.is_not_working?
+        server.break(log.time)
       else
-        if not_working_servers.has_key?(log.address)
-          result.push({"address" => log.address, "from" => not_working_servers[log.address], "to" => log.time})
-          not_working_servers.delete(log.address)
+        if server.is_not_working?
+          result.push({"address" => server.address, "from" => server.time_when_not_working, "to" => log.time})
         end
-        not_working_limits.store(log.address, 0)
+        server.fix
       end
     end
 
-    not_working_servers.each do |address, time|
-      result.push({"address" => address, "from" => time, "to" => NOT_FIX_MESSAGE})
-    end
+    servers.select{|address, server|
+      server.is_not_working?
+    }.each {|address, server|
+      result.push({"address" => server.address, "from" => server.time_when_not_working, "to" => NOT_FIX_MESSAGE})
+    }
 
     result
   end
