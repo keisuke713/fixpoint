@@ -3,6 +3,25 @@ class Server
 
   def initialize(address)
     set_network_and_host(address)
+    @work = true
+  end
+
+  def is_working?
+    @work
+  end
+
+  def break
+    @work = false
+  end
+
+  def fix
+    @work = true
+  end
+
+  def address
+    [
+      [network, host].join("."), subnet
+    ].join("/")
   end
 
   private

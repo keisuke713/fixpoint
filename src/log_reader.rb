@@ -5,9 +5,9 @@ class LogReader
   HEADER = "--------------"
 
   attr_reader :logs
-  # accepts List<Log> logs
-  def initialize(logs)
+  def initialize(logs, servers)
     @logs = logs
+    @servers = servers
   end
 
   def display_not_working_servers(limits)

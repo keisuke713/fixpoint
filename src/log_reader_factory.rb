@@ -1,5 +1,4 @@
 class LogReaderFactory
-  # take List<String> logs
   def initialize(logs)
     @logs = logs
   end
@@ -8,7 +7,12 @@ class LogReaderFactory
     LogReader.new(
       @logs.map {|log|
         Log.new(log[0], log[1], log[2])
-      }
+      },
+      @logs.map {|log|
+        Server.new(log[1])
+      }.map {|server|
+        [server.address, server]
+      }.to_h
     )
   end
 end
