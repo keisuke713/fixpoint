@@ -115,7 +115,7 @@ class LogReader
   private
 
   # これらのメンバ変数はパブリックメソッドにすると外部からも呼び出せてしまうためプライベートメソッドにする。
-  # @logsなど@をいちいちタイピングするのはめんどくさいため、logs・networksメソッドでラップする。
+  # @logsなど@をいちいちタイピングするのは面倒なため、logs・networksメソッドでラップする。
   def logs
     @logs
   end
