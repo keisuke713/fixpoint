@@ -1,5 +1,4 @@
 class LogReader
-  TIMEOUT_MESSAGE = "-"
   NOT_FIX_MESSAGE = "-----"
   START = "=============== ログの読み込みを始めます。 ================="
   FINISH = "=============== ログの読み込みを終了します。 ================="
@@ -51,7 +50,7 @@ class LogReader
     result = []
 
     logs.each do |log|
-      if log.response == TIMEOUT_MESSAGE
+      if log.is_timeout?
         next if not_working_servers.has_key?(log.address)
         not_working_limits.store(log.address, not_working_limits.fetch(log.address, 0) + 1)
         not_working_servers.store(log.address, log.time) if not_working_limits.fetch(log.address) >= limits
@@ -77,7 +76,7 @@ class LogReader
     result = []
 
     logs.each do |log|
-      next if log.response == TIMEOUT_MESSAGE
+      next if log.is_timeout?
 
       response_sums.store(log.address, response_sums.fetch(log.address, 0) + log.response.to_i)
       if servers_queue.has_key?(log.address)
@@ -125,7 +124,7 @@ class LogReader
       # 該当のネットワークがnot_working_networksに含まれていた場合resultにネットワークとfrom,toを追加し、取り除く
       # 該当のアドレスがnot_working_addressesに含まれていた場合は取り除く。
       # not_working_limitsを0に戻す
-      if log.response == TIMEOUT_MESSAGE
+      if log.is_timeout?
         not_working_limits.store(log.address, not_working_limits.fetch(log.address, 0) + 1)
         if not_working_limits.fetch(log.address) >= limits
           not_working_addresses.store(network, Set.new) unless not_working_addresses.has_key?(network)
