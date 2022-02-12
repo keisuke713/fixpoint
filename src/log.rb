@@ -4,4 +4,6 @@ class Log
     @address = address
     @response = response
   end
+
+  attr_reader :time, :address, :response
 end
