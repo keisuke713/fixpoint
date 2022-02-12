@@ -1,11 +1,12 @@
+require "pry"
 class Server
   attr_reader :amount_of_broken, :limit
   attr_accessor :network, :host, :subnet, :time_when_not_working
 
-  def initialize(address, limit, time, average)
+  def initialize(address, limit, response_array, average)
     set_network_and_host(address)
     @limit = limit
-    @time = time
+    @response_array = response_array
     @average = average
     @amount_of_broken = 0
     @time_when_not_working = nil
@@ -35,6 +36,21 @@ class Server
     [
       [network, host].join("."), subnet
     ].join("/")
+  end
+
+  def push_(response, time)
+    @response_array.push(response.to_i, time)
+  end
+
+  def is_overloaded?
+    return false unless @response_array.is_full?
+    curr_average = @response_array.average
+    return false if curr_average.negative?
+    curr_average >= @average
+  end
+
+  def start
+    @response_array.start
   end
 
   private

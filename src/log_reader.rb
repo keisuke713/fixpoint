@@ -1,3 +1,4 @@
+require "pry"
 class LogReader
   NOT_FIX_MESSAGE = "-----"
   START = "=============== ログの読み込みを始めます。 ================="
@@ -67,35 +68,19 @@ class LogReader
     result
   end
 
-  # def overloaded_servers(limit, average)
-  #   servers_queue = {}
-  #   response_sums = {}
-  #   result = []
-  #
-  #   logs.each do |log|
-  #     next if log.is_timeout?
-  #
-  #     response_sums.store(log.address, response_sums.fetch(log.address, 0) + log.response.to_i)
-  #     if servers_queue.has_key?(log.address)
-  #       servers_queue.fetch(log.address).push({"time" => log.time, "response" => log.response.to_i})
-  #     else
-  #       servers_queue.store(log.address, [{"time" => log.time, "response" => log.response.to_i}])
-  #     end
-  #     if servers_queue.fetch(log.address).size > limit
-  #       oldest_data = servers_queue.fetch(log.address).shift
-  #       response_sums.store(log.address, response_sums.fetch(log.address) - oldest_data.fetch("response"))
-  #     end
-  #
-  #     next if servers_queue.fetch(log.address).size < limit
-  #     current_average = (response_sums.fetch(log.address) / limit).floor
-  #     result.push({"address" => log.address, "from" => servers_queue.fetch(log.address)[0].fetch("time"), "to" => log.time}) if current_average >= average
-  #   end
-  #
-  #   result
-  # end
-  #
   def overloaded_servers
-    []
+    result = []
+    logs.each do |log|
+      next if log.is_timeout?
+
+      server = servers.fetch(log.address)
+
+      server.push_(log.response, log.time)
+      if server.is_overloaded?
+        result.push({"address" => server.address, "from" => server.start, "to" => log.time})
+      end
+    end
+    result
   end
 
   def not_working_networks(limits)
