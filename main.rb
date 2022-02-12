@@ -1,4 +1,6 @@
 require "csv"
+require "set"
+
 Dir[File.expand_path("../src", __FILE__) << "/*.rb"].each do |file|
   require file
 end
@@ -8,7 +10,7 @@ QUESTIONS = [
   "故障状態のサーバアドレスとそのサーバの故障期間を出力します。",
   "N回以上タイムアウトしたサーバアドレスとそのサーバの故障期間を出力します。",
   "過負荷になっているサーバアドレスを出力します。",
-  "故障しているサブネットを出力します。"
+  "故障しているネットワークを出力します。"
 ].map(&:freeze)
 
 def main
@@ -37,7 +39,7 @@ def main
   case question_no
   when 1 then
     log_reader = log_reader_factory.build
-    log_reader.display_not_working_servers(1)
+    log_reader.display_not_working_servers
   when 2 then
     puts "何回以上連続してタイムアウトしたら故障と見なしましょうか。1以上の整数を入力してEnterを押してください。"
     limit = gets.chomp.to_i
@@ -48,7 +50,7 @@ def main
 
 
     log_reader = log_reader_factory.set_limit(limit).build
-    log_reader.display_not_working_servers(1)
+    log_reader.display_not_working_servers
   when 3 then
     puts "直近何回の平均時間を算出しましょうか。1以上の整数を入力してEnterを押してください。"
     time = gets.chomp.to_i
@@ -65,7 +67,7 @@ def main
     end
 
     log_reader = log_reader_factory.set_time(time).set_average(average).build
-    log_reader.display_overloaded_servers(time, average)
+    log_reader.display_overloaded_servers
   when 4 then
     puts "何回以上連続してタイムアウトしたら故障と見なしましょうか。1以上の整数を入力してEnterを押してください。"
     limit = gets.chomp.to_i

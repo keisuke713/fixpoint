@@ -1,4 +1,3 @@
-require "pry"
 class Server
   attr_reader :amount_of_broken, :limit
   attr_accessor :network, :host, :subnet, :time_when_not_working

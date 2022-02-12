@@ -1,5 +1,3 @@
-require "pry"
-
 class LogReader
   NOT_FIX_MESSAGE = "-----"
   START = "=============== ログの読み込みを始めます。 ================="
@@ -12,9 +10,9 @@ class LogReader
     @networks = set_networks(servers)
   end
 
-  def display_not_working_servers(limits)
+  def display_not_working_servers
     puts START
-    not_working_servers(limits).each do |server|
+    not_working_servers.each do |server|
       puts HEADER
       puts "サーバーアドレス: #{server["address"]}"
       puts "タイムアウト時刻: #{server["from"]}"
@@ -23,9 +21,9 @@ class LogReader
     puts FINISH
   end
 
-  def display_overloaded_servers(times, average)
+  def display_overloaded_servers
     puts START
-    overloaded_servers(times, average).each do |server|
+    overloaded_servers.each do |server|
       puts "------------------"
       puts "サーバーアドレス: #{server["address"]}"
       puts "開始時刻: #{server["from"]}"
@@ -34,9 +32,9 @@ class LogReader
     puts FINISH
   end
 
-  def display_not_working_networks(times)
+  def display_not_working_networks
     puts START
-    not_working_networks(times).each do |server|
+    not_working_networks.each do |server|
       puts "------------------"
       puts "サーバーアドレス: #{server["network"]}"
       puts "タイムアウト時刻: #{server["from"]}"
