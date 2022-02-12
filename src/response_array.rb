@@ -7,6 +7,7 @@ class ResponseArray
   end
 
   def push(response, time)
+    # 指定されていた容量を超えていたら先頭から削除しないといけないため
     if capacity_is_over?
       res = @response.shift
       @sum -= res
