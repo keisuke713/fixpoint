@@ -414,7 +414,7 @@ RSpec.describe "" do
         {"network" => "10.20", "from" => "20201019133245", "to" => "20201019133246"},
         {"network" => "192.168.1", "from" => "20201019133244", "to" => "-----"}
       ]
-      log_reader = LogReaderFactory.new(input).set_limit(1).build
+      log_reader = LogReaderFactory.new(input).set_limit(2).build
       expect(log_reader.not_working_networks).to eq output
     end
 
