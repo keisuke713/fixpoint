@@ -5,9 +5,9 @@ class LogReader
   HEADER = "--------------"
 
   attr_reader :logs, :networks
-  def initialize(logs, servers)
+  def initialize(logs, networks)
     @logs = logs
-    @networks = set_networks(servers)
+    @networks = networks
   end
 
   def display_not_working_servers
@@ -127,17 +127,6 @@ class LogReader
       addresses_by_grouping_network.fetch(network).add(host)
     end
     addresses_by_grouping_network
-  end
-
-  def set_networks(servers)
-    networks = {}
-    servers.each do |server|
-      if !networks.has_key?(server.network)
-        networks.store(server.network, Set.new)
-      end
-      networks.fetch(server.network).add(server)
-    end
-    networks.map {|network, servers| Network.new(network, servers)}
   end
 
   def servers
