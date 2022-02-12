@@ -12,10 +12,10 @@ class LogReaderFactory
         Log.new(log[0], log[1], log[2])
       },
       @logs.map {|log|
-        Server.new(log[1], @limit, ResponseArray.new(@time), @average)
-      }.map {|server|
-        [server.address, server]
-      }.to_h
+        log[1]
+      }.to_set.to_a.map {|log|
+        Server.new(log, @limit, ResponseArray.new(@time), @average)
+      }
     )
   end
 

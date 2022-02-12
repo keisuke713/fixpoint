@@ -1,14 +1,15 @@
 require "pry"
+
 class LogReader
   NOT_FIX_MESSAGE = "-----"
   START = "=============== ログの読み込みを始めます。 ================="
   FINISH = "=============== ログの読み込みを終了します。 ================="
   HEADER = "--------------"
 
-  attr_reader :logs, :servers
+  attr_reader :logs, :networks
   def initialize(logs, servers)
     @logs = logs
-    @servers = servers
+    @networks = set_networks(servers)
   end
 
   def display_not_working_servers(limits)
@@ -154,5 +155,24 @@ class LogReader
       addresses_by_grouping_network.fetch(network).add(host)
     end
     addresses_by_grouping_network
+  end
+
+  def set_networks(servers)
+    networks = {}
+    servers.each do |server|
+      if !networks.has_key?(server.network)
+        networks.store(server.network, Set.new)
+      end
+      networks.fetch(server.network).add(server)
+    end
+    networks.map {|network, servers| Network.new(network, servers)}
+  end
+
+  def servers
+    networks.map { |network|
+      network.servers.to_a
+    }.flatten.map {|server|
+      [server.address, server]
+    }.to_h
   end
 end

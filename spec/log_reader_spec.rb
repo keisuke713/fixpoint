@@ -1,5 +1,6 @@
 require "../src/response_array"
 require "../src/server"
+require "../src/network"
 require "../src/log"
 require "../src/log_reader"
 require "../src/log_reader_factory"
