@@ -28,7 +28,6 @@ class LogReader
       puts "サーバーアドレス: #{server["address"]}"
       puts "開始時刻: #{server["from"]}"
       puts "終了時刻: #{server["to"]}"
-
     end
     puts FINISH
   end
