@@ -1,3 +1,4 @@
+require "pry"
 class LogReader
   NOT_FIX_MESSAGE = "-----"
   START = "=============== ログの読み込みを始めます。 ================="
@@ -71,18 +72,32 @@ class LogReader
 
   def overloaded_servers
     result = []
-    test = servers.map {|server| [server, nil]}.to_h
+    # test = servers.map {|server| [server, nil]}.to_h
+    test = servers.map {|network, server| [server, nil]}.to_h
+    # byebug
     logs.each do |log|
       next if log.is_timeout?
 
       server = servers.fetch(log.address)
 
       server.push_(log.response, log.time)
-      if server.is_overloaded?
-        result.push({"address" => server.address, "from" => server.start, "to" => log.time})
-      end
+      # if server.is_overloaded?
+      #   result.push({"address" => server.address, "from" => server.start, "to" => log.time})
+      # end
       # serverがオーバーロードかつtest[server].nil?だったら新しく日付をいれる
       # オーバーロードじゃなくてかつtest[server].nil?じゃなかったらresultにpush
+      if server.is_overloaded? && test.fetch(server).nil?
+        test.store(server, server.start)
+      end
+      if !server.is_overloaded? && test.fetch(server)
+        result.push({"address" => server.address, "from" => test.fetch(server), "to" => server.last_time_when_overloaded})
+        test.store(server, nil)
+      end
+    end
+    test.each do |server, time|
+      if time
+        result.push({"address" => server.address, "from" => time, "to" => NOT_FIX_MESSAGE})
+      end
     end
     result
   end

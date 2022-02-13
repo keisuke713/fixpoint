@@ -251,7 +251,7 @@ RSpec.describe "" do
       ]
       output = [
         {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133125"},
-        {"address" => "10.20.30.1/16", "from" => "20201019133134", "to" => "20201019133135"}
+        {"address" => "10.20.30.1/16", "from" => "20201019133134", "to" => LogReader::NOT_FIX_MESSAGE}
       ]
       log_reader = LogReaderFactory.new(input).set_time(2).set_average(5).build
       expect(log_reader.overloaded_servers).to eq output
@@ -296,8 +296,8 @@ RSpec.describe "" do
       ]
       output = [
         {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133135"},
-        {"address" => "10.20.30.2/16", "from" => "20201019133136", "to" => "20201019133139"},
-        {"address" => "10.20.30.1/16", "from" => "20201019133135", "to" => "20201019133140"}
+        {"address" => "10.20.30.1/16", "from" => "20201019133135", "to" => LogReader::NOT_FIX_MESSAGE},
+        {"address" => "10.20.30.2/16", "from" => "20201019133136", "to" => LogReader::NOT_FIX_MESSAGE}
       ]
       log_reader = LogReaderFactory.new(input).set_time(3).set_average(5).build
       expect(log_reader.overloaded_servers).to eq output

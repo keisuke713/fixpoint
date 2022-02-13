@@ -1,5 +1,5 @@
 class Server
-  attr_reader :network, :time_when_not_working
+  attr_reader :network, :time_when_not_working, :last_time_when_overloaded
 
   def initialize(address, limit, response_array, average)
     set_network_and_host(address)
@@ -8,6 +8,7 @@ class Server
     @average = average
     @amount_of_broken = 0
     @time_when_not_working = nil
+    @last_time_when_overloaded = nil
   end
 
   def is_working?
@@ -38,6 +39,9 @@ class Server
 
   def push_(response, time)
     response_array.push(response.to_i, time)
+    if is_overloaded?
+      @last_time_when_overloaded = time
+    end
   end
 
   def is_overloaded?
