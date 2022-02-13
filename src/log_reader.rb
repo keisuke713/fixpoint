@@ -1,4 +1,3 @@
-require "pry"
 class LogReader
   NOT_FIX_MESSAGE = "-----"
   START = "=============== ログの読み込みを始めます。 ================="
@@ -10,8 +9,7 @@ class LogReader
     @networks = networks
   end
 
-  # not_working_serversの結果を出力する
-  # 分けたのは自動テストを行いやすくするため
+  # 実際の処理と出力を分けたのは自動テストを行いやすくするため
   def display_not_working_servers
     puts START
     not_working_servers.each do |server|
@@ -72,16 +70,16 @@ class LogReader
 
   def overloaded_servers
     result = []
-    overloaded_time_keeper = servers.map {|network, server| [server, nil]}.to_h
-    # byebug
+    overloaded_time_keeper = servers.map {|network, server|
+      [server, nil]
+    }.to_h
+
     logs.each do |log|
       next if log.is_timeout?
 
       server = servers.fetch(log.address)
 
       server.push_(log.response, log.time)
-      # serverがオーバーロードかつoverloaded_time_keeper[server].nil?だったら新しく日付をいれる
-      # オーバーロードじゃなくてかつoverloaded_time_keeper[server].nil?じゃなかったらresultにpush
       if server.is_overloaded? && overloaded_time_keeper.fetch(server).nil?
         overloaded_time_keeper.store(server, server.first_time_when_overloaded)
       end
@@ -90,6 +88,7 @@ class LogReader
         overloaded_time_keeper.store(server, nil)
       end
     end
+
     overloaded_time_keeper.each do |server, time|
       if time
         result.push({"address" => server.address, "from" => time, "to" => NOT_FIX_MESSAGE})
