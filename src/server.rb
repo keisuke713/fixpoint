@@ -51,8 +51,12 @@ class Server
     curr_average >= average
   end
 
-  def start
-    response_array.start
+  def is_not_overloaded?
+    !is_overloaded?
+  end
+
+  def first_time_when_overloaded
+    response_array.first_time
   end
 
   private

@@ -27,7 +27,7 @@ class ResponseArray
     full(responses)
   end
 
-  def start
+  def first_time
     times[0]
   end
 

@@ -72,8 +72,7 @@ class LogReader
 
   def overloaded_servers
     result = []
-    # test = servers.map {|server| [server, nil]}.to_h
-    test = servers.map {|network, server| [server, nil]}.to_h
+    overloaded_time_keeper = servers.map {|network, server| [server, nil]}.to_h
     # byebug
     logs.each do |log|
       next if log.is_timeout?
@@ -81,20 +80,17 @@ class LogReader
       server = servers.fetch(log.address)
 
       server.push_(log.response, log.time)
-      # if server.is_overloaded?
-      #   result.push({"address" => server.address, "from" => server.start, "to" => log.time})
-      # end
-      # serverがオーバーロードかつtest[server].nil?だったら新しく日付をいれる
-      # オーバーロードじゃなくてかつtest[server].nil?じゃなかったらresultにpush
-      if server.is_overloaded? && test.fetch(server).nil?
-        test.store(server, server.start)
+      # serverがオーバーロードかつoverloaded_time_keeper[server].nil?だったら新しく日付をいれる
+      # オーバーロードじゃなくてかつoverloaded_time_keeper[server].nil?じゃなかったらresultにpush
+      if server.is_overloaded? && overloaded_time_keeper.fetch(server).nil?
+        overloaded_time_keeper.store(server, server.first_time_when_overloaded)
       end
-      if !server.is_overloaded? && test.fetch(server)
-        result.push({"address" => server.address, "from" => test.fetch(server), "to" => server.last_time_when_overloaded})
-        test.store(server, nil)
+      if server.is_not_overloaded? && overloaded_time_keeper.fetch(server)
+        result.push({"address" => server.address, "from" => overloaded_time_keeper.fetch(server), "to" => server.last_time_when_overloaded})
+        overloaded_time_keeper.store(server, nil)
       end
     end
-    test.each do |server, time|
+    overloaded_time_keeper.each do |server, time|
       if time
         result.push({"address" => server.address, "from" => time, "to" => NOT_FIX_MESSAGE})
       end
