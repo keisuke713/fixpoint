@@ -277,7 +277,7 @@ RSpec.describe "" do
         ["20201019133135", "10.20.30.1/16", "6"],
       ]
       output = [
-        {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133135"}
+        {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => LogReader::NOT_FIX_MESSAGE}
       ]
       log_reader = LogReaderFactory.new(input).set_time(2).set_average(5).build
       expect(log_reader.overloaded_servers).to eq output
@@ -343,7 +343,7 @@ RSpec.describe "" do
         ["20201019133234", "192.168.1.2/24", "-"]
       ]
       output = [
-        {"network" => "192.168.1", "from" => "20201019133224", "to" => "-----"}
+        {"network" => "192.168.1", "from" => "20201019133224", "to" => LogReader::NOT_FIX_MESSAGE}
       ]
       log_reader = LogReaderFactory.new(input).set_limit(1).build
       expect(log_reader.not_working_networks).to eq output
@@ -362,7 +362,7 @@ RSpec.describe "" do
       ]
       output = [
         {"network" => "192.168.1", "from" => "20201019133135", "to" => "20201019133224"},
-        {"network" => "192.168.1", "from" => "20201019133237", "to" => "-----"}
+        {"network" => "192.168.1", "from" => "20201019133237", "to" => LogReader::NOT_FIX_MESSAGE}
       ]
       log_reader = LogReaderFactory.new(input).set_limit(1).build
       expect(log_reader.not_working_networks).to eq output
@@ -380,7 +380,7 @@ RSpec.describe "" do
         ["20201019133237", "192.168.1.1/24", "-"]
       ]
       output = [
-        {"from"=>"20201019133235", "network"=>"192.168.1", "to"=>"-----"}
+        {"from"=>"20201019133235", "network"=>"192.168.1", "to"=>LogReader::NOT_FIX_MESSAGE}
       ]
       log_reader = LogReaderFactory.new(input).set_limit(2).build
       expect(log_reader.not_working_networks).to eq output
@@ -416,7 +416,7 @@ RSpec.describe "" do
         ["20201019133245", "10.20.30.2/16", "-"]
       ]
       output = [
-        {"network" => "192.168.1", "from" => "20201019133244", "to" => "-----"}
+        {"network" => "192.168.1", "from" => "20201019133244", "to" => LogReader::NOT_FIX_MESSAGE}
       ]
       log_reader = LogReaderFactory.new(input).set_limit(2).build
       expect(log_reader.not_working_networks).to eq output
@@ -438,7 +438,7 @@ RSpec.describe "" do
       ]
       output = [
         {"network" => "10.20", "from" => "20201019133245", "to" => "20201019133246"},
-        {"network" => "192.168.1", "from" => "20201019133244", "to" => "-----"}
+        {"network" => "192.168.1", "from" => "20201019133244", "to" => LogReader::NOT_FIX_MESSAGE}
       ]
       log_reader = LogReaderFactory.new(input).set_limit(2).build
       expect(log_reader.not_working_networks).to eq output

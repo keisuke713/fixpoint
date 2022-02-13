@@ -71,6 +71,7 @@ class LogReader
 
   def overloaded_servers
     result = []
+    test = servers.map {|server| [server, nil]}.to_h
     logs.each do |log|
       next if log.is_timeout?
 
@@ -80,6 +81,8 @@ class LogReader
       if server.is_overloaded?
         result.push({"address" => server.address, "from" => server.start, "to" => log.time})
       end
+      # serverがオーバーロードかつtest[server].nil?だったら新しく日付をいれる
+      # オーバーロードじゃなくてかつtest[server].nil?じゃなかったらresultにpush
     end
     result
   end
