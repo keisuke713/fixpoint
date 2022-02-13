@@ -458,6 +458,21 @@ RSpec.describe "" do
       log_reader = LogReaderFactory.new(input).set_limit(2).build
       expect(log_reader.not_working_networks).to eq output
     end
-
+  end
+  context "大量のログが入ってきた時のケース" do
+    # 処理が正しく動くのは確認済みのためこちらで大規模のデータが入ってきた時に処理が極端に遅くなっていないかを確認する
+    it "10万件のログが入ってくるケース" do
+      NUM = 100_000
+      DEFAULT_TIME = 20200101000000
+      input = []
+      NUM.times do |n|
+        input.push([(DEFAULT_TIME + n).to_s, "10.20.30.2/16", "1"])
+      end
+      output= []
+      log_reader = LogReaderFactory.new(input).set_limit(1).set_average(2).build
+      expect(log_reader.not_working_servers).to eq output
+      expect(log_reader.overloaded_servers).to eq output
+      expect(log_reader.not_working_networks).to eq output
+    end
   end
 end
