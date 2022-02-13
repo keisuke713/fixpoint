@@ -256,6 +256,32 @@ RSpec.describe "" do
       log_reader = LogReaderFactory.new(input).set_time(2).set_average(5).build
       expect(log_reader.overloaded_servers).to eq output
     end
+    it "長期間平均値が基準値を超える" do
+      input = [
+        ["20201019133124", "10.20.30.1/16", "6"],
+        ["20201019133125", "10.20.30.1/16", "4"],
+        ["20201019133134", "10.20.30.1/16", "6"],
+        ["20201019133135", "10.20.30.1/16", "1"],
+      ]
+      output = [
+        {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133134"}
+      ]
+      log_reader = LogReaderFactory.new(input).set_time(2).set_average(5).build
+      expect(log_reader.overloaded_servers).to eq output
+    end
+    it "タイムアウトを挟みつつ長期間平均値が基準値を超える" do
+      input = [
+        ["20201019133124", "10.20.30.1/16", "6"],
+        ["20201019133125", "10.20.30.1/16", "4"],
+        ["20201019133134", "10.20.30.1/16", "-"],
+        ["20201019133135", "10.20.30.1/16", "6"],
+      ]
+      output = [
+        {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133135"}
+      ]
+      log_reader = LogReaderFactory.new(input).set_time(2).set_average(5).build
+      expect(log_reader.overloaded_servers).to eq output
+    end
     it "複数サーバの平均値が基準値を超える" do
       input = [
         ["20201019133124", "10.20.30.1/16", "7"],
