@@ -282,6 +282,21 @@ RSpec.describe "" do
       log_reader = LogReaderFactory.new(input).set_time(2).set_average(5).build
       expect(log_reader.overloaded_servers).to eq output
     end
+    it "直近1回の結果しか確認しないケース" do
+      input = [
+        ["20201019133124", "10.20.30.1/16", "6"],
+        ["20201019133125", "10.20.30.1/16", "4"],
+        ["20201019133134", "10.20.30.1/16", "-"],
+        ["20201019133135", "10.20.30.1/16", "6"],
+        ["20201019133136", "10.20.30.1/16", "5"]
+      ]
+      output = [
+        {"address" => "10.20.30.1/16", "from" => "20201019133124", "to" => "20201019133124"},
+        {"address" => "10.20.30.1/16", "from" => "20201019133135", "to" => LogReader::NOT_FIX_MESSAGE}
+      ]
+      log_reader = LogReaderFactory.new(input).set_time(1).set_average(5).build
+      expect(log_reader.overloaded_servers).to eq output
+    end
     it "複数サーバの平均値が基準値を超える" do
       input = [
         ["20201019133124", "10.20.30.1/16", "7"],
