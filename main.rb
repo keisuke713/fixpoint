@@ -47,7 +47,6 @@ def main
       return
     end
 
-
     log_reader = log_reader_factory.set_limit(limit).build
     log_reader.display_not_working_servers
   when 3 then
